@@ -25,12 +25,12 @@ const categories = Array.from(categoriesMap.entries());
     {siteConfig.avatar && (
       <img src={siteConfig.avatar} alt="avatar" class="mx-auto h-20 w-20 rounded-full" />
     )}
-    <h1 class="mt-4 text-3xl font-bold text-gray-900">{siteConfig.title}</h1>
-    <p class="mt-2 text-gray-600">{siteConfig.description}</p>
+    <h1 class="mt-4 text-3xl font-bold text-gray-900 dark:text-gray-100">{siteConfig.title}</h1>
+    <p class="mt-2 text-gray-600 dark:text-gray-400">{siteConfig.description}</p>
     {siteConfig.social && (
-      <div class="mt-4 flex justify-center gap-4 text-sm text-gray-500">
+      <div class="mt-4 flex justify-center gap-4 text-sm text-gray-500 dark:text-gray-500">
         {Object.entries(siteConfig.social).map(([name, url]) => (
-          <a href={url} class="hover:text-gray-700 transition-colors" target="_blank" rel="noopener noreferrer">
+          <a href={url} class="hover:text-gray-700 dark:hover:text-gray-300 transition-colors" target="_blank" rel="noopener noreferrer">
             {name}
           </a>
         ))}
@@ -39,7 +39,7 @@ const categories = Array.from(categoriesMap.entries());
   </section>
 
   <section class="mt-8">
-    <h2 class="text-xl font-semibold text-gray-900">最新文章</h2>
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">最新文章</h2>
     <div class="mt-4">
       {latestPosts.map((post) => (
         <BlogCard
@@ -53,10 +53,10 @@ const categories = Array.from(categoriesMap.entries());
   </section>
 
   <section class="mt-8">
-    <h2 class="text-xl font-semibold text-gray-900">分类</h2>
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">分类</h2>
     <div class="mt-4 flex flex-wrap gap-3">
       {categories.map(([cat, count]) => (
-        <a href={`/categories/${cat.toLowerCase()}`} class="rounded-full bg-gray-100 px-4 py-1.5 text-sm text-gray-700 hover:bg-gray-200 transition-colors">
+        <a href={`/categories/${cat.toLowerCase()}`} class="rounded-full bg-gray-100 px-4 py-1.5 text-sm text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
           {cat} ({count})
         </a>
       ))}
