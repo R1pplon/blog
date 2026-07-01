@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import CursorReticle from "../components/CursorReticle.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -34,5 +35,6 @@ const { title, description } = Astro.props;
       <slot />
     </main>
     <Footer />
+    <CursorReticle />
   </body>
 </html>
