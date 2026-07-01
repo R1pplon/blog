@@ -1,0 +1,89 @@
+<div class="timer-container">
+  <svg viewbox="0 0 70 140">
+    <polygon points="70,70 0,70 0,0 70,0 70,70 70,140 0,140 0,70 70,70" />
+  </svg>
+  <svg viewbox="0 0 70 140">
+    <polygon points="70,70 0,70 0,0 70,0 70,70 70,140 0,140 0,70 70,70" />
+  </svg>
+  <svg viewbox="0 0 70 140">
+    <polygon points="70,70 0,70 0,0 70,0 70,70 70,140 0,140 0,70 70,70" />
+  </svg>
+  <svg viewbox="0 0 70 140">
+    <polygon points="70,70 0,70 0,0 70,0 70,70 70,140 0,140 0,70 70,70" />
+  </svg>
+  <svg viewbox="0 0 70 140">
+    <polygon points="70,70 0,70 0,0 70,0 70,70 70,140 0,140 0,70 70,70" />
+  </svg>
+  <svg viewbox="0 0 70 140">
+    <polygon points="70,70 0,70 0,0 70,0 70,70 70,140 0,140 0,70 70,70" />
+  </svg>
+</div>
+
+<style>
+  .timer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+  }
+
+  .timer-container svg {
+    width: 3rem;
+    overflow: visible;
+    margin-right: 1rem;
+  }
+
+  .timer-container svg:nth-child(even) {
+    margin-right: 2rem;
+  }
+
+  .timer-container svg:last-child {
+    margin-right: 0;
+  }
+
+  .timer-container polygon {
+    fill: none;
+    stroke-width: 8;
+    stroke: var(--color-accent, #6B69D6);
+    transition: stroke-dasharray 0.5s ease;
+    stroke-dasharray: 0 70 0 5 60 5 0 5 60 5 0 5 60 5 0 5 60 5 0 5 60 5 0 5 60 5 0 70 0;
+  }
+</style>
+
+<script>
+  const dasharrayData = [
+    [0, 1, 1, 1, 1, 1, 1, 0],
+    [0, 0, 0, 1, 1, 0, 0, 0],
+    [1, 0, 1, 1, 0, 1, 1, 0],
+    [1, 0, 1, 1, 1, 1, 0, 0],
+    [1, 1, 0, 1, 1, 0, 0, 0],
+    [1, 1, 1, 0, 1, 1, 0, 0],
+    [1, 1, 1, 0, 1, 1, 1, 0],
+    [0, 0, 1, 1, 1, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 0],
+    [1, 1, 1, 1, 1, 1, 0, 0],
+  ].map((arry) => {
+    let str = "0";
+    arry.forEach((num) => {
+      if (num) str += " 5 60 5 0";
+      else str += " 70 0";
+    });
+    return str;
+  });
+
+  const polygons = [
+    ...document.querySelectorAll(".timer-container polygon"),
+  ];
+
+  setInterval(() => {
+    const now = new Date();
+    const times = [
+      now.getHours(),
+      now.getMinutes(),
+      now.getSeconds(),
+    ].flatMap((t) => [Math.floor(t / 10), t % 10]);
+    polygons.forEach((poly, i) => {
+      poly.style.strokeDasharray = dasharrayData[times[i]];
+    });
+  }, 1000);
+</script>

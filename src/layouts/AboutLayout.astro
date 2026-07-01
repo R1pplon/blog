@@ -1,0 +1,27 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Timer from "../components/Timer.astro";
+import { siteConfig } from "../site.config";
+
+const { frontmatter } = Astro.props;
+const title = frontmatter.title || "About";
+---
+
+<BaseLayout title={title} description={title}>
+  <section class="py-8 text-center">
+    {siteConfig.avatar && (
+      <img src={siteConfig.avatar} alt="avatar" class="mx-auto h-20 w-20 rounded-full" />
+    )}
+    <h1 class="mt-4 text-3xl font-bold text-foreground">{title}</h1>
+    <div class="mt-4 mx-auto max-w-lg text-muted-foreground leading-relaxed prose-p:text-muted-foreground">
+      <slot />
+    </div>
+  </section>
+
+  <hr class="my-8 border-border" />
+
+  <section class="text-center">
+    <h2 class="text-lg font-medium text-muted-foreground">当前时间</h2>
+    <Timer />
+  </section>
+</BaseLayout>
