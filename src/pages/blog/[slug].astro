@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
@@ -20,7 +20,7 @@ if (!post) {
   return Astro.redirect("/404");
 }
 
-const { Content } = await post.render();
+const { Content } = await render(post);
 const category = post.id.split("/")[0];
 const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
   year: "numeric",
