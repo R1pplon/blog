@@ -23,7 +23,7 @@ const formattedDate = date.toLocaleDateString("zh-CN", {
   <div class="mt-1 flex items-center gap-3 text-sm text-gray-500 dark:text-gray-500">
     <time datetime={date.toISOString()}>{formattedDate}</time>
     {category && (
-      <a href={`/blog?category=${category}`} class="text-gray-600 hover:text-accent-400 hover:underline dark:text-gray-400 dark:hover:text-accent-200">
+      <a href={`/blog?category=${category}`} class="text-accent-400 hover:text-accent-500 hover:underline dark:text-accent-200 dark:hover:text-accent-100">
         {category}
       </a>
     )}
