@@ -1,0 +1,31 @@
+---
+interface Props {
+  slug: string;
+  title: string;
+  date: Date;
+  category?: string;
+}
+
+const { slug, title, date, category } = Astro.props;
+const formattedDate = date.toLocaleDateString("zh-CN", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<article class="border-b py-4 last:border-b-0">
+  <a href={`/blog/${slug}`} class="group block">
+    <h2 class="text-lg font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+      {title}
+    </h2>
+    <div class="mt-1 flex items-center gap-3 text-sm text-gray-500">
+      <time datetime={date.toISOString()}>{formattedDate}</time>
+      {category && (
+        <a href={`/categories/${category.toLowerCase()}`} class="text-blue-600 hover:underline">
+          {category}
+        </a>
+      )}
+    </div>
+  </a>
+</article>
