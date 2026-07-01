@@ -19,7 +19,7 @@
     width: var(--width);
     height: var(--height);
     transform: translate(-50%, -50%);
-    transition: all 0.2s ease-out;
+    transition: width 0.2s ease-out, height 0.2s ease-out;
     pointer-events: none;
     z-index: 9999;
   }
@@ -72,7 +72,7 @@
         x = cx + (x - cx) * 0.1;
         y = cy + (y - cy) * 0.1;
       }
-      this.el.style.transform = `translate(${x}px, ${y}px)`;
+      this.el.style.transform = `translate(calc(${x}px - 50%), calc(${y}px - 50%))`;
     },
 
     bindTargets() {
