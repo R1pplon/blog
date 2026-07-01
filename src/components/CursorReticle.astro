@@ -5,30 +5,31 @@
 <style>
   :root {
     --reticle-color: #6B69D6;
+    --reticle-size: 1.5rem;
   }
   :root.dark {
     --reticle-color: #d9d6fc;
   }
 
   .reticle {
-    --width: 4rem;
-    --height: 4rem;
+    --width: var(--reticle-size);
+    --height: var(--reticle-size);
     position: fixed;
     top: 0;
     left: 0;
     width: var(--width);
     height: var(--height);
     transform: translate(-50%, -50%);
-    transition: width 0.2s ease-out, height 0.2s ease-out;
+    transition: all 0.2s ease-out;
     pointer-events: none;
     z-index: 9999;
   }
 
   .reticle .corner {
     position: absolute;
-    width: 1rem;
-    height: 1rem;
-    border-width: 0.3rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-width: 0.1rem;
     border-color: var(--reticle-color);
   }
 
@@ -46,6 +47,8 @@
 </div>
 
 <script>
+  const defaultSize = getComputedStyle(document.documentElement)
+    .getPropertyValue("--reticle-size").trim();
   const reticle = {
     el: document.getElementById("reticle"),
     currentTarget: null,
@@ -87,8 +90,8 @@
         });
         el.addEventListener("mouseleave", () => {
           this.currentTarget = null;
-          this.el.style.setProperty("--width", "4rem");
-          this.el.style.setProperty("--height", "4rem");
+          this.el.style.setProperty("--width", defaultSize);
+          this.el.style.setProperty("--height", defaultSize);
         });
       });
     },
