@@ -2,11 +2,54 @@
 @plugin "@tailwindcss/typography";
 @variant dark (&:where(.dark, .dark *));
 
+:root {
+  --surface: #ffffff;
+  --foreground: #111827;
+  --muted-foreground: #4b5563;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --secondary: #f3f4f6;
+  --secondary-hover: #e5e7eb;
+
+  --accent-link: #5a58c4;
+  --accent-link-hover: #4947b0;
+  --accent-active-bg: #6B69D6;
+  --accent-active-text: #ffffff;
+}
+
+.dark {
+  --surface: #030712;
+  --foreground: #f3f4f6;
+  --muted-foreground: #9ca3af;
+  --muted: #6b7280;
+  --border: #1f2937;
+  --secondary: #1f2937;
+  --secondary-hover: #374151;
+
+  --accent-link: #d9d6fc;
+  --accent-link-hover: #f0efff;
+  --accent-active-bg: #f0efff;
+  --accent-active-text: #111827;
+}
+
 @theme {
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+
   --color-accent: #6B69D6;
   --color-accent-100: #f0efff;
   --color-accent-200: #d9d6fc;
   --color-accent-300: #6B69D6;
   --color-accent-400: #5a58c4;
   --color-accent-500: #4947b0;
+
+  --color-accent-link: var(--accent-link);
+  --color-accent-link-hover: var(--accent-link-hover);
+  --color-accent-active-bg: var(--accent-active-bg);
+  --color-accent-active-text: var(--accent-active-text);
 }

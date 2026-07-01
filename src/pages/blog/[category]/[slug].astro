@@ -34,10 +34,10 @@ const formattedDate = post.data.date.toLocaleDateString("zh-CN", {
 <BaseLayout title={post.data.title} description={post.data.title}>
   <article>
     <header class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{post.data.title}</h1>
-      <div class="mt-3 flex items-center gap-3 text-sm text-gray-500 dark:text-gray-500">
+      <h1 class="text-3xl font-bold text-foreground">{post.data.title}</h1>
+      <div class="mt-3 flex items-center gap-3 text-sm text-muted">
         <time datetime={post.data.date.toISOString()}>{formattedDate}</time>
-        <a href={`/blog?category=${category}`} class="_target text-accent-400 hover:text-accent-500 hover:underline dark:text-accent-200 dark:hover:text-accent-100">
+        <a href={`/blog?category=${category}`} class="_target text-accent-link hover:text-accent-link-hover hover:underline">
           {category}
         </a>
       </div>

@@ -15,12 +15,12 @@ const categories = Array.from(categoriesSet);
 ---
 
 <BaseLayout title="文章">
-  <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">文章</h1>
+  <h1 class="text-2xl font-bold text-foreground">文章</h1>
 
   <div class="mt-4 flex flex-wrap gap-2">
-    <button data-filter="all" class="_target rounded-full px-4 py-1 text-sm bg-accent-300 text-white dark:bg-accent-100 dark:text-gray-900">全部</button>
+    <button data-filter="all" class="_target rounded-full px-4 py-1 text-sm bg-accent-active-bg text-accent-active-text">全部</button>
     {categories.map((cat) => (
-      <button data-filter={cat} class="_target rounded-full px-4 py-1 text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
+      <button data-filter={cat} class="_target rounded-full px-4 py-1 text-sm bg-secondary text-muted-foreground hover:bg-secondary-hover transition-colors">
         {cat}
       </button>
     ))}
@@ -39,8 +39,8 @@ const categories = Array.from(categoriesSet);
 </BaseLayout>
 
 <script>
-  const ACTIVE = 'rounded-full px-4 py-1 text-sm bg-accent-300 text-white dark:bg-accent-100 dark:text-gray-900';
-  const DEFAULT = 'rounded-full px-4 py-1 text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors';
+  const ACTIVE = 'rounded-full px-4 py-1 text-sm bg-accent-active-bg text-accent-active-text';
+  const DEFAULT = 'rounded-full px-4 py-1 text-sm bg-secondary text-muted-foreground hover:bg-secondary-hover transition-colors';
 
   const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
   const articles = document.querySelectorAll<HTMLElement>('[data-category]');

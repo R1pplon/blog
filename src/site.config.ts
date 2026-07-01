@@ -1,7 +1,7 @@
 export const siteConfig = {
   title: "My Blog",
   description: "个人博客",
-  avatar: "/avatar.webp",
+  avatar: "/avatar.png",
   social: {
     github: "https://github.com",
   },

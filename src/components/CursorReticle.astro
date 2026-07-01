@@ -1,14 +1,15 @@
 ---
 // 磁力指针准星组件 — 四角括号跟随鼠标，悬停联动元素时展开并吸附
+const enableReticle = true; // 设为 false 禁用四角光标
 ---
 
 <style>
   :root {
-    --reticle-color: #6B69D6;
+    --reticle-color: var(--color-accent, #6B69D6);
     --reticle-size: 1.5rem;
   }
   :root.dark {
-    --reticle-color: #d9d6fc;
+    --reticle-color: var(--color-accent-200, #d9d6fc);
   }
 
   .reticle {
@@ -39,12 +40,14 @@
   .reticle .corner:nth-child(4) { bottom: 0; right: 0; border-style: none solid solid none; }
 </style>
 
-<div class="reticle" id="reticle">
-  <div class="corner"></div>
-  <div class="corner"></div>
-  <div class="corner"></div>
-  <div class="corner"></div>
-</div>
+{enableReticle && (
+  <div class="reticle" id="reticle">
+    <div class="corner"></div>
+    <div class="corner"></div>
+    <div class="corner"></div>
+    <div class="corner"></div>
+  </div>
+)}
 
 <script>
   const defaultSize = getComputedStyle(document.documentElement)
