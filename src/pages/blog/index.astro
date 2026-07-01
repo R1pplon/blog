@@ -18,9 +18,9 @@ const categories = Array.from(categoriesSet);
   <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">文章</h1>
 
   <div class="mt-4 flex flex-wrap gap-2">
-    <button data-filter="all" class="rounded-full px-4 py-1 text-sm bg-accent-300 text-white dark:bg-accent-100 dark:text-gray-900">全部</button>
+    <button data-filter="all" class="_target rounded-full px-4 py-1 text-sm bg-accent-300 text-white dark:bg-accent-100 dark:text-gray-900">全部</button>
     {categories.map((cat) => (
-      <button data-filter={cat} class="rounded-full px-4 py-1 text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
+      <button data-filter={cat} class="_target rounded-full px-4 py-1 text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
         {cat}
       </button>
     ))}

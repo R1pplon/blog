@@ -79,7 +79,7 @@
     },
 
     bindTargets() {
-      const targets = document.querySelectorAll("a, button");
+      const targets = document.querySelectorAll("._target");
       targets.forEach((el) => {
         el.addEventListener("mouseenter", () => {
           this.currentTarget = el;

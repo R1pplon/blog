@@ -17,13 +17,13 @@ const formattedDate = date.toLocaleDateString("zh-CN", {
 <article data-category={category} class="border-b border-gray-200 py-4 last:border-b-0 dark:border-gray-800">
   <a href={`/blog/${category}/${slug}`} class="group block">
     <h2 class="text-lg font-medium text-gray-900 group-hover:text-accent-400 dark:text-gray-100 dark:group-hover:text-accent-200 transition-colors">
-      {title}
+      <span class="_target">{title}</span>
     </h2>
   </a>
   <div class="mt-1 flex items-center gap-3 text-sm text-gray-500 dark:text-gray-500">
     <time datetime={date.toISOString()}>{formattedDate}</time>
     {category && (
-      <a href={`/blog?category=${category}`} class="text-accent-400 hover:text-accent-500 hover:underline dark:text-accent-200 dark:hover:text-accent-100">
+      <a href={`/blog?category=${category}`} class="_target text-accent-400 hover:text-accent-500 hover:underline dark:text-accent-200 dark:hover:text-accent-100">
         {category}
       </a>
     )}
