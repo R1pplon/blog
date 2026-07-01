@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FaultText from "../components/FaultText.astro";
+---
+
+<BaseLayout title="404 | 页面未找到" description="页面不存在">
+  <section class="pt-12 text-center">
+    <FaultText text="404" />
+    <p class="mt-4 text-muted-foreground">你访问的页面不存在或已被移除。</p>
+    <a href="/" class="_target mt-6 inline-block rounded-full bg-accent-active-bg px-6 py-2 text-sm font-medium text-accent-active-text hover:opacity-90 transition-opacity">
+      返回首页
+    </a>
+  </section>
+</BaseLayout>
