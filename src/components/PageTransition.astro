@@ -60,25 +60,27 @@
     transition: opacity 0.3s ease;
   }
 
-  .pt_out {
-    transform: translateY(100%);
-  }
-
-  .pt_out svg,
-  .pt_out p {
+  #page-transition.pt_hidden svg,
+  #page-transition.pt_hidden p {
     opacity: 0;
   }
 </style>
 
 <script is:inline>
-  const pt = document.getElementById("page-transition");
+  var pt = document.getElementById("page-transition");
 
   function ptShow() {
-    pt.classList.remove("pt_out");
+    pt.classList.remove("pt_hidden");
+    pt.style.transition = "none";
+    pt.style.transform = "translateY(100%)";
+    pt.offsetHeight;
+    pt.style.transition = "";
+    pt.style.transform = "";
   }
 
   function ptHide() {
-    pt.classList.add("pt_out");
+    pt.classList.add("pt_hidden");
+    pt.style.transform = "translateY(-100%)";
   }
 
   window.__pt = { show: ptShow, hide: ptHide };
@@ -88,7 +90,7 @@
   document.addEventListener(
     "click",
     function (e) {
-      const link = e.target.closest("a");
+      var link = e.target.closest("a");
       if (!link) return;
       if (!link.href) return;
       if (link.target === "_blank") return;
