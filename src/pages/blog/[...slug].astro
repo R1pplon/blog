@@ -1,0 +1,147 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  const entries: Array<{ params: { slug: string } }> = [];
+
+  const dirs = new Set<string>();
+  for (const p of posts) {
+    const parts = p.id.split("/");
+    for (let i = 0; i < parts.length; i++) {
+      const seg = parts.slice(0, i + 1).join("/");
+      dirs.add(seg);
+    }
+  }
+
+  for (const d of dirs) {
+    entries.push({ params: { slug: d } });
+  }
+
+  return entries;
+}
+
+const { slug } = Astro.params;
+const posts = await getCollection("blog");
+
+const article = posts.find((p) => p.id === slug);
+const indexArticle = posts.find((p) => p.id === `${slug}/index`);
+const isArticle = !!article;
+const isIndex = !!indexArticle;
+
+let children: { name: string; title: string; date: Date; isDir: boolean }[] = [];
+if (!isArticle && !isIndex) {
+  const prefix = slug + "/";
+  const seen = new Set<string>();
+  for (const p of posts) {
+    if (!p.id.startsWith(prefix)) continue;
+    const rest = p.id.slice(prefix.length);
+    const childName = rest.split("/")[0]!;
+    if (!seen.has(childName)) {
+      seen.add(childName);
+      const childFull = prefix + childName;
+      const isDir = posts.some((pp) => pp.id.startsWith(childFull + "/"));
+      const childPost = posts.find((pp) => pp.id === childFull);
+      children.push({
+        name: childName,
+        title: childPost ? childPost.data.title : childName,
+        date: childPost ? childPost.data.date : p.data.date,
+        isDir,
+      });
+    }
+  }
+  children.sort((a, b) => b.date.getTime() - a.date.getTime());
+}
+
+let renderedArticle = null as Awaited<ReturnType<typeof render>> | null;
+let renderedIndex = null as Awaited<ReturnType<typeof render>> | null;
+let pageTitle = slug.split("/").pop() || "";
+let formattedDate = "";
+
+if (article) {
+  renderedArticle = await render(article);
+  formattedDate = article.data.date.toLocaleDateString("zh-CN", {
+    year: "numeric", month: "long", day: "numeric",
+  });
+  pageTitle = article.data.title;
+}
+if (indexArticle) {
+  renderedIndex = await render(indexArticle);
+  pageTitle = indexArticle.data.title;
+}
+
+if (!isArticle && !isIndex) {
+  pageTitle = slug.split("/").map(seg => seg).join(" / ");
+}
+---
+
+<BaseLayout title={pageTitle}>
+  {
+    renderedArticle ? (
+      <article>
+        <header class="mb-8">
+          <h1 class="text-3xl font-bold text-foreground">{article!.data.title}</h1>
+          <div class="mt-3 flex items-center gap-3 text-sm text-muted">
+            <time datetime={article!.data.date.toISOString()}>{formattedDate}</time>
+            <a href={`/blog/${article!.id.split("/")[0]}`} class="_target text-accent-link hover:text-accent-link-hover hover:underline">
+              {article!.id.split("/")[0]}
+            </a>
+          </div>
+        </header>
+        <div class="prose prose-gray max-w-none dark:prose-invert">
+          <renderedArticle.Content />
+        </div>
+      </article>
+    ) : renderedIndex ? (
+      <article>
+        <div class="prose prose-gray max-w-none dark:prose-invert">
+          <renderedIndex.Content />
+        </div>
+      </article>
+    ) : (
+      <div>
+        <nav class="mb-6 text-sm text-muted">
+          <a href="/blog" class="_target text-accent-link hover:text-accent-link-hover hover:underline">blog</a>
+          {
+            slug.split("/").map((seg: string, i: number, arr: string[]) => (
+              <span>
+                <span class="mx-1">/</span>
+                {i === arr.length - 1 ? (
+                  <span class="text-foreground font-medium">{seg}</span>
+                ) : (
+                  <a
+                    href={`/blog/${arr.slice(0, i + 1).join("/")}`}
+                    class="_target text-accent-link hover:text-accent-link-hover hover:underline"
+                  >
+                    {seg}
+                  </a>
+                )}
+              </span>
+            ))
+          }
+        </nav>
+        <ul class="space-y-1">
+          {children.map((child) => (
+            <li>
+              <a
+                href={`/blog/${slug}/${child.name}`}
+                class="_target flex items-center gap-2 py-1.5 px-3 -mx-3 rounded hover:bg-secondary transition-colors text-foreground hover:text-accent-link-hover"
+              >
+                <span class="text-muted text-sm w-5 text-right shrink-0 font-mono">
+                  {child.isDir ? "/" : ""}
+                </span>
+                <span>{child.title}</span>
+                {!child.isDir && (
+                  <span class="text-muted text-sm ml-auto shrink-0">
+                    {child.date.toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" })}
+                  </span>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</BaseLayout>

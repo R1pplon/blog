@@ -186,7 +186,7 @@ sudo venv/bin/python3 main.py
 - `magisk` 面具 获取root权限
 - `libhoudini` Arm转译
 
-![](assets/Waydroid%20安装使用手册/file-20260221211820075.png)
+<!-- broken image:  (assets/Waydroid%20安装使用手册/file-20260221211820075.png) -->
 
 ## 真机伪装
 
@@ -214,7 +214,7 @@ burp suite 的 代理设置，修改监听器
 - 监听 `0.0.0.0` 或特定 IP
 - **勾选 Support invisible proxying** 
 
-![](assets/Waydroid%20安装使用手册/file-20260222010415555.png)
+<!-- broken image:  (assets/Waydroid%20安装使用手册/file-20260222010415555.png) -->
 
 ### 配置 iptables 透明代理规则
 
@@ -269,7 +269,7 @@ sudo iptables -t nat -D PREROUTING 1
 
 adb连接后即可在 Device Manager 查看使用
 
-![](assets/Waydroid%20安装使用手册/file-20260222015611254.png)
+<!-- broken image:  (assets/Waydroid%20安装使用手册/file-20260222015611254.png) -->
 
 ## 参考
 

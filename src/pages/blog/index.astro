@@ -22,9 +22,11 @@ for (const post of sortedPosts) {
   months.get(month)!.push(post);
 }
 
-const categoriesSet = new Set(
-  posts.map((p) => p.id.split("/")[0]).filter(Boolean)
-);
+const categoriesSet = new Set<string>();
+for (const p of posts) {
+  const top = p.id.split("/")[0];
+  if (top) categoriesSet.add(top);
+}
 const categories = Array.from(categoriesSet);
 
 function formatDate(date: Date) {
@@ -64,8 +66,9 @@ function formatDate(date: Date) {
                 {monthNames[monthIdx]}
               </h3>
               {monthPosts.map((post) => {
-                const slug = post.id.split("/")[1];
-                const category = post.id.split("/")[0];
+                const parts = post.id.split("/");
+                const category = parts[0];
+                const rest = parts.slice(1).join("/");
                 return (
                   <article
                     data-category={category}
@@ -73,7 +76,7 @@ function formatDate(date: Date) {
                     class="blog-post"
                   >
                     <a
-                      href={`/blog/${category}/${slug}`}
+                      href={`/blog/${post.id}`}
                       class="_target text-foreground hover:text-accent-link-hover transition-colors"
                     >
                       {post.data.title}
@@ -81,7 +84,7 @@ function formatDate(date: Date) {
                     <span class="blog-meta">
                       {formatDate(post.data.date)}
                       <span class="mx-1.5 text-border">·</span>
-                      <a href={`/blog?category=${category}`} class="_target text-accent-link hover:text-accent-link-hover hover:underline">
+                      <a href={`/blog/${category}`} class="_target text-accent-link hover:text-accent-link-hover hover:underline">
                         {category}
                       </a>
                     </span>

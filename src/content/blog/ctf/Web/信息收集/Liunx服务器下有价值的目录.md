@@ -10,7 +10,7 @@ php伪协议访问日志，注入php代码形成攻击
 
 ## /etc/passwd
 
-![_etc_passwd.png](./_etc_passwd.png)
+![_etc_passwd.png](../文件包含/_etc_passwd.png)
 
 ## /etc/shadow
 
