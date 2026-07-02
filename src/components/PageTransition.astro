@@ -36,21 +36,16 @@
     fill: none;
     stroke: var(--color-accent);
     stroke-width: 12;
-    stroke-dasharray: 160;
-    stroke-dashoffset: 160;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
     transform-origin: center;
-    animation: pt_circle_rotate 3s ease-in infinite;
+    animation: pt_circle_rotate 1s linear infinite;
     will-change: transform;
   }
 
   @keyframes pt_circle_rotate {
-    0% {
-      transform: rotate(0deg);
-      stroke-dashoffset: 160;
-    }
-    100% {
+    to {
       transform: rotate(360deg);
-      stroke-dashoffset: -160;
     }
   }
 
