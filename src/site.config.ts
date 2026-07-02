@@ -1,5 +1,5 @@
 export const siteConfig = {
-  title: "My Blog",
+  title: "R1pple's Lab",
   description: "个人博客",
   avatar: "/avatar.png",
   social: {
