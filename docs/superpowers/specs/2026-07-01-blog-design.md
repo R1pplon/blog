@@ -1,6 +1,8 @@
 # 个人博客网站 — 设计文档
 
-> 日期: 2026-07-01
+> 日期: 2026-07-01  
+> **状态: 已废止** — 见 `2026-07-02-routing-architecture.md` 了解当前架构。
+> 此文档描述的 `[slug].astro` + `categories/[category].astro` 路由及 `BlogCard.astro` 组件已被 `[...slug].astro` catch-all 替代。
 
 ## 1. 概述
 

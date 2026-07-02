@@ -1,7 +1,9 @@
 # 科技现代版主题配色 — 设计文档
 
-> 日期: 2026-07-01
-> 分支: tech-theme
+> 日期: 2026-07-01  
+> 分支: tech-theme  
+> **状态: 已废止** — 见 `2026-07-02-color-system.md` 了解当前实现。
+> 此文档描述的直接 `accent-*` class 硬编码（如 `text-accent-400 dark:text-accent-200`）已被语义 token（`text-accent-link` / `text-accent-link-hover`）替代。
 
 ## 1. 概述
 
