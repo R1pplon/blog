@@ -1,17 +1,35 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import BlogCard from "../../components/BlogCard.astro";
 
 const posts = await getCollection("blog");
 const sortedPosts = posts.sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime()
 );
 
+const monthNames = [
+  "一月", "二月", "三月", "四月", "五月", "六月",
+  "七月", "八月", "九月", "十月", "十一月", "十二月",
+];
+
+const years = new Map<number, Map<number, typeof sortedPosts>>();
+for (const post of sortedPosts) {
+  const year = post.data.date.getFullYear();
+  const month = post.data.date.getMonth();
+  if (!years.has(year)) years.set(year, new Map());
+  const months = years.get(year)!;
+  if (!months.has(month)) months.set(month, []);
+  months.get(month)!.push(post);
+}
+
 const categoriesSet = new Set(
   posts.map((p) => p.id.split("/")[0]).filter(Boolean)
 );
 const categories = Array.from(categoriesSet);
+
+function formatDate(date: Date) {
+  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+}
 ---
 
 <BaseLayout title="文章">
@@ -26,17 +44,96 @@ const categories = Array.from(categoriesSet);
     ))}
   </div>
 
-  <div class="mt-6">
-    {sortedPosts.map((post) => (
-      <BlogCard
-        slug={post.id.split("/")[1]}
-        title={post.data.title}
-        date={post.data.date}
-        category={post.id.split("/")[0]}
-      />
+  <div class="blog-grid mt-8" data-blog-grid>
+    {Array.from(years.entries()).map(([year, months], yearIdx) => (
+      <>
+        <h2 data-year={year} class={`blog-year text-lg font-semibold text-foreground ${yearIdx > 0 ? 'blog-year-gap' : ''}`}>
+          {year}
+        </h2>
+        {Array.from(months.entries()).map(([monthIdx, monthPosts]) => {
+          const count = monthPosts.length;
+          const monthKey = `${year}-${monthIdx}`;
+          return (
+            <>
+              <h3
+                data-month={monthKey}
+                data-original-span={count}
+                style={`grid-row: span ${count}`}
+                class="blog-month"
+              >
+                {monthNames[monthIdx]}
+              </h3>
+              {monthPosts.map((post) => {
+                const slug = post.id.split("/")[1];
+                const category = post.id.split("/")[0];
+                return (
+                  <article
+                    data-category={category}
+                    data-month={monthKey}
+                    class="blog-post"
+                  >
+                    <a
+                      href={`/blog/${category}/${slug}`}
+                      class="_target text-foreground hover:text-accent-link-hover transition-colors"
+                    >
+                      {post.data.title}
+                    </a>
+                    <span class="blog-meta">
+                      {formatDate(post.data.date)}
+                      <span class="mx-1.5 text-border">·</span>
+                      <a href={`/blog?category=${category}`} class="_target text-accent-link hover:text-accent-link-hover hover:underline">
+                        {category}
+                      </a>
+                    </span>
+                  </article>
+                );
+              })}
+            </>
+          );
+        })}
+      </>
     ))}
   </div>
 </BaseLayout>
+
+<style>
+  .blog-grid {
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    gap: 0 1.5rem;
+  }
+
+  .blog-year {
+    grid-column: 1 / -1;
+  }
+
+  .blog-year-gap {
+    margin-top: 2.5rem;
+  }
+
+  .blog-month {
+    align-self: start;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-muted-foreground, #9ca3af);
+    padding-top: 0.5rem;
+    text-align: right;
+  }
+
+  .blog-post {
+    border-left: 1px solid var(--color-border, #374151);
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .blog-meta {
+    font-size: 0.875rem;
+    color: var(--color-muted, #6b7280);
+    white-space: nowrap;
+  }
+</style>
 
 <script>
   const ACTIVE = 'rounded-full px-4 py-1 text-sm bg-accent-active-bg text-accent-active-text';
@@ -44,6 +141,8 @@ const categories = Array.from(categoriesSet);
 
   const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
   const articles = document.querySelectorAll<HTMLElement>('[data-category]');
+  const monthEls = document.querySelectorAll<HTMLElement>('h3[data-month]');
+  const yearEls = document.querySelectorAll<HTMLElement>('[data-year]');
 
   function activate(el: HTMLButtonElement) {
     buttons.forEach(b => { b.className = DEFAULT; });
@@ -54,13 +153,59 @@ const categories = Array.from(categoriesSet);
     articles.forEach(a => {
       a.style.display = (category === 'all' || a.dataset.category === category) ? '' : 'none';
     });
+
+    const monthVisible = new Map<string, number>();
+    const yearVisible = new Set<number>();
+
+    for (const a of articles) {
+      if (a.style.display !== 'none') {
+        const mk = a.dataset.month!;
+        monthVisible.set(mk, (monthVisible.get(mk) || 0) + 1);
+      }
+    }
+
+    for (const m of monthEls) {
+      const mk = m.dataset.month!;
+      const count = monthVisible.get(mk) || 0;
+      if (count > 0) {
+        m.style.display = '';
+        m.style.gridRow = `span ${count}`;
+        const yr = parseInt(mk.split('-')[0]);
+        yearVisible.add(yr);
+      } else {
+        m.style.display = 'none';
+      }
+    }
+
+    for (const y of yearEls) {
+      const yr = parseInt(y.dataset.year!);
+      y.style.display = yearVisible.has(yr) ? '' : 'none';
+    }
+  }
+
+  function resetSpans() {
+    for (const m of monthEls) {
+      const original = m.dataset.originalSpan;
+      if (original) {
+        m.style.gridRow = `span ${original}`;
+        m.style.display = '';
+      }
+    }
+    for (const y of yearEls) {
+      y.style.display = '';
+    }
   }
 
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       const cat = btn.dataset.filter!;
       activate(btn);
-      filter(cat);
+      if (cat === 'all') {
+        resetSpans();
+        articles.forEach(a => { a.style.display = ''; });
+      } else {
+        filter(cat);
+      }
       const url = new URL(window.location.href);
       if (cat === 'all') {
         url.searchParams.delete('category');
@@ -76,6 +221,8 @@ const categories = Array.from(categoriesSet);
   const activeBtn = document.querySelector<HTMLButtonElement>(`[data-filter="${initialCategory}"]`);
   if (activeBtn) {
     activate(activeBtn);
-    filter(initialCategory);
+    if (initialCategory !== 'all') {
+      filter(initialCategory);
+    }
   }
 </script>
