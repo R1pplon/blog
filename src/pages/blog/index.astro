@@ -199,20 +199,24 @@ function formatDate(date: Date) {
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
       const cat = btn.dataset.filter!;
-      activate(btn);
-      if (cat === 'all') {
-        resetSpans();
-        articles.forEach(a => { a.style.display = ''; });
-      } else {
-        filter(cat);
-      }
-      const url = new URL(window.location.href);
-      if (cat === 'all') {
-        url.searchParams.delete('category');
-      } else {
-        url.searchParams.set('category', cat);
-      }
-      history.pushState({}, '', url);
+      window.__pt.show();
+      setTimeout(() => {
+        activate(btn);
+        if (cat === 'all') {
+          resetSpans();
+          articles.forEach(a => { a.style.display = ''; });
+        } else {
+          filter(cat);
+        }
+        const url = new URL(window.location.href);
+        if (cat === 'all') {
+          url.searchParams.delete('category');
+        } else {
+          url.searchParams.set('category', cat);
+        }
+        history.pushState({}, '', url);
+        window.__pt.hide();
+      }, 1000);
     });
   });
 

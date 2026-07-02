@@ -1,0 +1,106 @@
+---
+---
+
+<div id="page-transition">
+  <svg viewBox="0 0 50 50">
+    <circle r="25" cx="25" cy="25"></circle>
+  </svg>
+  <p>LOADING</p>
+</div>
+
+<style is:global>
+  #page-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-secondary);
+    z-index: 100000000;
+    transition: transform 1s ease;
+  }
+
+  #page-transition svg {
+    width: 5rem;
+    margin-bottom: 2rem;
+    overflow: visible;
+    transition: opacity 0.3s ease;
+  }
+
+  #page-transition svg circle {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 12;
+    stroke-dasharray: 160;
+    stroke-dashoffset: 160;
+    transform-origin: center;
+    animation: pt_circle_rotate 3s ease-in infinite;
+  }
+
+  @keyframes pt_circle_rotate {
+    0% {
+      transform: rotate(0deg);
+      stroke-dashoffset: 160;
+    }
+    100% {
+      transform: rotate(360deg);
+      stroke-dashoffset: -160;
+    }
+  }
+
+  #page-transition p {
+    font-family: sans-serif;
+    font-size: 2rem;
+    color: var(--color-accent);
+    font-weight: 900;
+    transition: opacity 0.3s ease;
+  }
+
+  .pt_out {
+    transform: translateY(100%);
+  }
+
+  .pt_out svg,
+  .pt_out p {
+    opacity: 0;
+  }
+</style>
+
+<script is:inline>
+  const pt = document.getElementById("page-transition");
+
+  function ptShow() {
+    pt.classList.remove("pt_out");
+  }
+
+  function ptHide() {
+    pt.classList.add("pt_out");
+  }
+
+  window.__pt = { show: ptShow, hide: ptHide };
+
+  window.addEventListener("load", ptHide);
+
+  document.addEventListener(
+    "click",
+    function (e) {
+      const link = e.target.closest("a");
+      if (!link) return;
+      if (!link.href) return;
+      if (link.target === "_blank") return;
+      if (link.hostname !== location.hostname) return;
+      if (link.protocol === "mailto:" || link.protocol === "javascript:") return;
+
+      e.preventDefault();
+      ptShow();
+      setTimeout(function () {
+        location.href = link.href;
+      }, 1000);
+    },
+    { capture: true },
+  );
+</script>
