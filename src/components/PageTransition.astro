@@ -22,6 +22,7 @@
     background-color: var(--color-secondary);
     z-index: 100000000;
     transition: transform 1s ease;
+    will-change: transform;
   }
 
   #page-transition svg {
@@ -39,6 +40,7 @@
     stroke-dashoffset: 160;
     transform-origin: center;
     animation: pt_circle_rotate 3s ease-in infinite;
+    will-change: transform;
   }
 
   @keyframes pt_circle_rotate {
@@ -85,7 +87,11 @@
 
   window.__pt = { show: ptShow, hide: ptHide };
 
-  window.addEventListener("load", ptHide);
+  document.addEventListener("DOMContentLoaded", function () {
+    requestAnimationFrame(function () {
+      requestAnimationFrame(ptHide);
+    });
+  });
 
   document.addEventListener(
     "click",
