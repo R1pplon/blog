@@ -1,8 +1,8 @@
 ---
-const { text = "404" } = Astro.props;
+const { text = "404", class: className = "", style = "" } = Astro.props;
 ---
 
-<div class="_target fault-container text-center py-8" data-text={text}>
+<div class={`_target fault-container text-center py-8 ${className}`} style={style} data-text={text}>
   <p class="_target faulttext">{text}</p>
   <p class="_target faulttext">{text}</p>
   <p class="_target faulttext">{text}</p>
@@ -13,7 +13,7 @@ const { text = "404" } = Astro.props;
   .fault-container {
     display: grid;
     place-items: center;
-    min-height: 16rem;
+    min-height: var(--fault-min-height, 16rem);
     cursor: pointer;
     user-select: none;
   }
@@ -23,9 +23,9 @@ const { text = "404" } = Astro.props;
 
   .faulttext {
     font-family: inherit;
-    font-size: 8rem;
-    font-weight: 900;
-    letter-spacing: 0.5rem;
+    font-size: var(--fault-text-size, 8rem);
+    font-weight: var(--fault-text-weight, 900);
+    letter-spacing: var(--fault-letter-spacing, 0.5rem);
     line-height: 1;
     color: var(--color-foreground, #f3f4f6);
   }

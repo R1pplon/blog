@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import FaultText from "../components/FaultText.astro";
 import { siteConfig } from "../site.config";
 
 const posts = await getCollection("blog");
@@ -19,7 +20,9 @@ const categories = Array.from(categoriesMap.entries());
     {siteConfig.avatar && (
       <a href="/about"><img src={siteConfig.avatar} alt="avatar" class="_target mx-auto size-[150px] rounded-full" /></a>
     )}
-    <h1 class="mt-4 text-3xl font-bold text-foreground">{siteConfig.title}</h1>
+    <div class="mt-4" style="--fault-text-size: 1.875rem; --fault-min-height: 3rem; --fault-text-weight: 700; --fault-letter-spacing: 0;">
+      <FaultText text={siteConfig.title} />
+    </div>
     <p class="mt-2 text-muted-foreground">{siteConfig.description}</p>
     {siteConfig.social && (
       <div class="mt-4 flex justify-center gap-4 text-sm text-muted">
