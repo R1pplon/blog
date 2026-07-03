@@ -7,6 +7,47 @@ const { text = "404", class: className = "", style = "" } = Astro.props;
   <p class="_target faulttext">{text}</p>
   <p class="_target faulttext">{text}</p>
   <p class="_target faulttext">{text}</p>
+  <script is:inline>
+    (function () {
+      const container = document.currentScript.parentElement;
+      const textEls = container.querySelectorAll(".faulttext");
+      const text = container.dataset.text || "404";
+
+      textEls.forEach((el) => {
+        el.setAttribute("data-text", text);
+      });
+
+      let player = null;
+
+      function glitch() {
+        if (player) return;
+
+        const stopTime = setTimeout(() => {
+          clearInterval(player);
+          player = null;
+          textEls.forEach((el) => {
+            el.classList.remove("fault");
+            el.style.transform = "";
+            el.style.clipPath = "";
+          });
+        }, 1000);
+
+        player = setInterval(() => {
+          textEls.forEach((el) => {
+            el.classList.add("fault");
+            el.style.transform = `translate(${Math.random() * 60 - 30}%,${Math.random() * 60 - 30}%)`;
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            const h = Math.random() * 50 + 50;
+            const w = Math.random() * 40 + 10;
+            el.style.clipPath = `polygon(${x}% ${y}%, ${x + w}% ${y}%, ${x + w}% ${y + h}%, ${x}% ${y + h}%)`;
+          });
+        }, 30);
+      }
+
+      container.addEventListener("click", glitch);
+    })();
+  </script>
 </div>
 
 <style>
@@ -49,45 +90,3 @@ const { text = "404", class: className = "", style = "" } = Astro.props;
     transform: translateX(-2%);
   }
 </style>
-
-<script is:inline>
-  (function () {
-    const container = document.currentScript.parentElement;
-    const textEls = container.querySelectorAll(".faulttext");
-    const text = container.dataset.text || "404";
-
-    textEls.forEach((el) => {
-      el.setAttribute("data-text", text);
-    });
-
-    let player = null;
-
-    function glitch() {
-      if (player) return;
-
-      const stopTime = setTimeout(() => {
-        clearInterval(player);
-        player = null;
-        textEls.forEach((el) => {
-          el.classList.remove("fault");
-          el.style.transform = "";
-          el.style.clipPath = "";
-        });
-      }, 1000);
-
-      player = setInterval(() => {
-        textEls.forEach((el) => {
-          el.classList.add("fault");
-          el.style.transform = `translate(${Math.random() * 60 - 30}%,${Math.random() * 60 - 30}%)`;
-          const x = Math.random() * 100;
-          const y = Math.random() * 100;
-          const h = Math.random() * 50 + 50;
-          const w = Math.random() * 40 + 10;
-          el.style.clipPath = `polygon(${x}% ${y}%, ${x + w}% ${y}%, ${x + w}% ${y + h}%, ${x}% ${y + h}%)`;
-        });
-      }, 30);
-    }
-
-    container.addEventListener("click", glitch);
-  })();
-</script>
