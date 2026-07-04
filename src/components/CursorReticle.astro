@@ -55,6 +55,7 @@ const enableReticle = true; // 设为 false 禁用四角光标
   const reticle = {
     el: document.getElementById("reticle"),
     currentTarget: null,
+    currentSelection: null,
 
     init() {
       if (!this.el) return;
@@ -65,18 +66,45 @@ const enableReticle = true; // 设为 false 禁用四角光标
       window.addEventListener("mouseenter", () => {
         this.el.style.opacity = "1";
       });
+      document.addEventListener("selectionchange", () => {
+        const sel = window.getSelection();
+        if (sel && !sel.isCollapsed && sel.toString().trim()) {
+          this.currentSelection = sel.getRangeAt(0).getBoundingClientRect();
+        } else {
+          this.currentSelection = null;
+        }
+      });
       this.bindTargets();
     },
 
     move(e) {
       let x = e.clientX;
       let y = e.clientY;
+      let locked = false;
       if (this.currentTarget) {
         const r = this.currentTarget.getBoundingClientRect();
         const cx = r.left + r.width / 2;
         const cy = r.top + r.height / 2;
         x = cx + (x - cx) * 0.1;
         y = cy + (y - cy) * 0.1;
+        locked = true;
+      } else if (this.currentSelection) {
+        const r = this.currentSelection;
+        const margin = innerWidth / 50;
+        if (x >= r.left - margin && x <= r.right + margin &&
+            y >= r.top - margin && y <= r.bottom + margin) {
+          locked = true;
+          this.el.style.setProperty("--width", `${r.width + margin}px`);
+          this.el.style.setProperty("--height", `${r.height + margin}px`);
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          x = cx + (x - cx) * 0.1;
+          y = cy + (y - cy) * 0.1;
+        }
+      }
+      if (!locked) {
+        this.el.style.setProperty("--width", defaultSize);
+        this.el.style.setProperty("--height", defaultSize);
       }
       this.el.style.transform = `translate(calc(${x}px - 50%), calc(${y}px - 50%))`;
     },
