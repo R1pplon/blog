@@ -67,6 +67,7 @@ Indirect CSS variable pattern — no `dark:` prefix needed:
 - Theme switch: `html.classList.toggle('dark')` in Header.astro
 - Early theme restore: inline `<script>` in BaseLayout reads `localStorage` before paint
 - Accent: `#6B69D6` (purple), fixed across themes (not a CSS variable)
+- `::selection` highlight: `background-color: #6B69D6; color: #ffffff` (global, no theme dependency)
 
 ## Page transition (`PageTransition.astro`)
 
@@ -75,13 +76,40 @@ Indirect CSS variable pattern — no `dark:` prefix needed:
 - `ptShow()` snapshots `--color-secondary`/`--color-accent` to `--pt-locked-bg`/`--pt-locked-accent` to prevent theme-switch flicker
 - `DOMContentLoaded` + double `rAF` triggers initial hide (page load transition)
 
+## Prose content script (`[...slug].astro` inline)
+
+An `<script is:inline>` at the end of `[...slug].astro` enhances prose content on article and index pages:
+
+**Heading reticle** — Each `.prose` heading (`h1`-`h6`) gets its inner text wrapped in `<span class="_target cursor-pointer">`. This restricts reticle targeting to the text width rather than the full block width.
+
+**Heading scroll offset** — Clicking a heading scrolls it to `innerHeight / 5` from the top, keeping it visible below the sticky header.
+
+**Code block copy button** — Each `pre.astro-code` is wrapped in `div.code-block-wrapper` (styles in `global.css`). A copy button appears on hover at the top-right corner. Click copies `pre.textContent` to clipboard; button icon switches to a checkmark for 2s.
+
+**Code block reticle** — `._target` is added to `div.code-block-wrapper`, so the reticle brackets the entire code block and stays active over the copy button.
+
+## Cursor reticle text selection
+
+`CursorReticle.astro` includes a `selectionchange` listener that caches the current text selection's `DOMRect`. In `move()`, when a non-empty selection exists and the cursor is within proximity (`margin = innerWidth / 50`), the reticle magnetically snaps to the selection rectangle center. Priority chain:
+
+1. **`._target` hover** — `mouseenter`/`mouseleave` manage `currentTarget` and sizing
+2. **Text selection** — proximity-based magnetic snap, `move()` manages sizing
+3. **Free tracking** — reticle follows cursor, size = `--reticle-size` default
+
+Selection proximity uses `margin` as tolerance on all sides. Moving the cursor away from the selection releases the reticle freely. Clearing the selection (clicking elsewhere, Escape) sets `currentSelection = null` and the reticle returns to normal behavior.
+
 ## Critical quirks
 
 **`is:inline` required** — Any script using `document.currentScript` MUST use `<script is:inline>`. Astro defaults to `type="module"` where `currentScript` is `null`. Applies to: `FaultText.astro`, `PageTransition.astro`.
 
-**`._target` class** — Marks elements for magnetic reticle cursor. Interactive elements (links, buttons) should carry this class.
+**`._target` class** — Marks elements for magnetic reticle cursor. Interactive elements (links, buttons) should carry this class. Additionally:
+- Article page `<h1>` title: wrapped in `<span class="_target">` for text-width targeting
+- Prose headings (`h1`-`h6`): automatically wrapped in `span._target` by client-side script in `[...slug].astro`
+- Prose code blocks (`pre.astro-code`): `._target` is added to the wrapper `div.code-block-wrapper` by the same script
 
 **Broken image refs crush the build** — Astro's content-assets plugin validates ALL `![alt](path)` references at build time. Missing images = hard error. Use `<!-- broken image: alt (path) -->` comments to keep orphaned refs.
+
+**`is:inline` scripts are raw JS, not TypeScript** — Astro outputs `<script is:inline>` content verbatim. TypeScript syntax (`!.` non-null assertions, `:type` annotations) causes browser `SyntaxError` and breaks the entire script block. Always write plain JS in `is:inline`.
 
 **Garbage in content directory** — Files like `.exe`, `.css`, `.js`, `.html`, `.rar` may have been imported accidentally. The `glob("**/*.md")` loader ignores them, but they bloat the repo. Check with `find src/content/blog -type f ! -name '*.md' ! -name '*.png' ! -name '*.jpg' ! -name '*.webp'`.
 
@@ -97,9 +125,12 @@ Indirect CSS variable pattern — no `dark:` prefix needed:
 
 ### Pipeline
 1. `actions/checkout@v4` with `submodules: true`
-2. `git submodule update --remote --merge` — always pulls latest note-remote
+2. `git submodule update --remote` — always pulls latest note-remote
 3. `npm ci` → `npm run build`
 4. `appleboy/scp-action` deploys `dist/` to server (port 30022)
+
+### Trigger filtering (docs-only skip)
+Push trigger ignores changes to `AGENTS.md`, `docs/**`, `README.md` via `paths-ignore`. Only source file changes trigger deploy. `repository_dispatch` is unaffected.
 
 ### note-remote → blog auto-deploy
 
