@@ -5,6 +5,7 @@
 - `npm run build` — SSG static build to `dist/`
 - `npm run preview` — preview built output
 - No lint, test, or typecheck scripts exist
+- `git submodule update --init` — clone note-remote content (required on fresh clone)
 
 ## Stack
 - **Astro v7** SSG, **Tailwind v4** via `@tailwindcss/vite` plugin
@@ -30,15 +31,31 @@ Directory behavior:
 
 ## Content system
 
+### Git submodule
+
+`src/content/blog/` is a git submodule pointing to [R1pplon/note-remote](https://github.com/R1pplon/note-remote.git).
+The blog repo stores only a commit hash pointer; actual `.md` files live in the note-remote repo.
+Fresh clones require `git submodule update --init`.
+
 ```
-src/content/blog/          → content root
-  ctf/Web/SQL注入/mysql.md → post.id = "ctf/Web/SQL注入/mysql"
+src/content/blog/          → submodule → R1pplon/note-remote (root = DevOps/, Linux/, ...)
+  Linux/WSL/WSL2.md       → post.id = "Linux/WSL/WSL2"
 ```
 
 - Content loader: `glob({ pattern: "**/*.md", base: "./src/content/blog" })` (Astro v5+ API)
 - Schema: only `{ title: string, date: date }` in frontmatter
 - No tags, categories, draft, or image fields. Category = first segment of `post.id`.
-- Non-md files (`.php`, `.txt`, `.zip`, `.htaccess`) are NOT loaded but exist alongside content
+- CI always runs `git submodule update --remote` before build to get the latest notes.
+
+### Updating notes
+
+1. Write `.md` in note-remote → commit + push to `main`
+2. note-remote CI dispatches `note-updated` event → blog auto-deploys
+3. Locally: `git submodule update --remote` in blog repo to sync
+
+### `.obsidian/` directory
+
+note-remote contains `.obsidian/` for Obsidian vault config. Changes to this directory do NOT trigger blog deploy — filtered by `paths-ignore` in note-remote's notify workflow.
 
 ## Color system
 
@@ -69,3 +86,34 @@ Indirect CSS variable pattern — no `dark:` prefix needed:
 **Garbage in content directory** — Files like `.exe`, `.css`, `.js`, `.html`, `.rar` may have been imported accidentally. The `glob("**/*.md")` loader ignores them, but they bloat the repo. Check with `find src/content/blog -type f ! -name '*.md' ! -name '*.png' ! -name '*.jpg' ! -name '*.webp'`.
 
 **No `site` in astro config** — All generated URLs are relative. No sitemap, no RSS, no canonical URLs.
+
+## CI/CD
+
+`.github/workflows/deploy.yml` handles automated deploy to `r1pple.top`.
+
+### Triggers
+- `push` to blog `master`
+- `repository_dispatch` event `note-updated` (sent by note-remote on push)
+
+### Pipeline
+1. `actions/checkout@v4` with `submodules: true`
+2. `git submodule update --remote --merge` — always pulls latest note-remote
+3. `npm ci` → `npm run build`
+4. `appleboy/scp-action` deploys `dist/` to server (port 30022)
+
+### note-remote → blog auto-deploy
+
+note-remote's `.github/workflows/notify-blog.yml` dispatches `note-updated` event to blog on push to main.
+Requires a PAT (`BLOG_REPO_TOKEN`) stored in note-remote's secrets.
+`.obsidian/**` and `.github/**` paths are excluded from triggering via `paths-ignore`.
+
+## LSP
+
+Configured in `~/.config/opencode/opencode.jsonc`:
+
+| Server | Coverage | Runtime |
+|--------|----------|---------|
+| `@astrojs/language-server` | `.astro` | `npx astro-ls --stdio` |
+| `typescript-language-server` | `.ts`, `.js`, `.mjs` | `npx typescript-language-server --stdio` |
+
+Both are local devDependencies, run via `npx` from `node_modules/.bin/`.
