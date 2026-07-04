@@ -3,6 +3,10 @@ name: Deploy
 on:
   push:
     branches: [master]
+    paths-ignore:
+      - 'AGENTS.md'
+      - 'docs/**'
+      - 'README.md'
   repository_dispatch:
     types: [note-updated]
 
