@@ -4,7 +4,7 @@
 
 为博客增加以下三个功能：
 1. **文章列表字数显示** — `/blog` 页每篇文章元信息附加字数
-2. **首页目录词云图** — 各父目录名称按旗下文章总字数权重展示
+2. **首页关键词词云** — 各父目录名称按旗下文章总字数权重展示
 3. **首页饼状图** — 顶级分类按文章总字数比例展示
 
 ## 架构
@@ -23,10 +23,11 @@ src/pages/blog/index.astro        ← 文章列表加字数显示 (修改)
 
 ```ts
 function countWords(md: string): number
+function countPostWords(post: { filePath?: string; id: string }): number
 ```
 
-- 输入：原始 Markdown 字符串（来自 `post.body`）
-- 输出：整数（中文字数 + 英文词数）
+- `countWords` — 纯算法，输入原始 Markdown 字符串，输出字数
+- `countPostWords` — 从文件系统读取 `.md` 文件内容后调用 `countWords`，处理文件读取失败的容错（返回 0）
 
 ### 剥离规则
 
@@ -54,7 +55,7 @@ Markdown 语法标记在计数前剥离，保留可读文本：
 
 ### 数据来源
 
-`post.body` 是 Astro 内容集合的原始 Markdown 字符串，SSG 构建时一次性读取。~120 篇文章的正则处理 < 100ms。
+`post.filePath` 来自 Astro glob loader 存储的完整项目相对路径（如 `src/content/blog/Linux/WSL/WSL2.md`）。`countPostWords` 通过 `readFileSync(resolve(filePath))` 读取原始 Markdown 文本。`post.body` 在部分环境下不可用，因此采用直接文件读取方案。SSG 构建时一次性读取，~120 篇文章的处理 < 200ms。
 
 ## 功能 1：文章列表字数
 
@@ -70,7 +71,7 @@ Markdown 语法标记在计数前剥离，保留可读文本：
 <span class="blog-meta">
   {formatDate(post.data.date)}
   <span class="mx-1.5 text-border">·</span>
-  <span>{countWords(post.body)}字</span>
+  <span>{countPostWords(post)}字</span>
   <span class="mx-1.5 text-border">·</span>
   <a href={`/blog/${parentPath}`}>{parentDir}</a>
 </span>
@@ -80,7 +81,7 @@ Markdown 语法标记在计数前剥离，保留可读文本：
 
 ### Frontmatter 改动
 
-每篇文章在 map 回调中调用一次 `countWords(post.body)`。
+每篇文章在 map 回调中调用一次 `countPostWords(post)`。
 
 ## 功能 2：目录词云图 - `src/components/HotTags.astro`
 
@@ -232,7 +233,7 @@ path = `
 section 1: 头像 + FaultText 标题 + 简介 (现有)
 section 2: 社交链接 (现有)
 section 3: [NEW] 饼状图 — 顶级分类字数分布
-section 4: [NEW] 词云图 — 目录:字数 权重标签
+section 4: [NEW] 关键词 — 目录:字数 权重标签
 section 5: 分类标签 (现有)
 ```
 
@@ -248,15 +249,15 @@ section 5: 分类标签 (现有)
 | 数据聚合 (Map) | ~0.1ms/篇 | 简单 Map 插入 + 累加 |
 | 总增量 | < 200ms | SSG 构建时一次性成本，无运行时开销 |
 
-## 执行步骤
+## 执行步骤（已完成）
 
-1. 新建 `src/lib/wordCount.ts` — 字数统计工具函数
-2. 新建 `src/components/PieChart.astro` — SVG 饼图组件
-3. 新建 `src/components/HotTags.astro` — CSS 权重标签组件
-4. 修改 `src/pages/index.astro` — 数据聚合 + 引入两个新组件
-5. 修改 `src/pages/blog/index.astro` — 文章列表加字数
-6. `npm run build` 验证
-7. 更新 `AGENTS.md` 文档
+1. [x] 新建 `src/lib/wordCount.ts` — 字数统计工具函数 + `countPostWords` 文件读取
+2. [x] 新建 `src/components/PieChart.astro` — SVG 饼图组件
+3. [x] 新建 `src/components/HotTags.astro` — CSS 权重标签组件
+4. [x] 修改 `src/pages/index.astro` — 数据聚合 + 引入两个新组件
+5. [x] 修改 `src/pages/blog/index.astro` — 文章列表加字数
+6. [x] `npm run build` 验证通过
+7. [x] 更新 `AGENTS.md` 文档
 
 ## 相关文件
 

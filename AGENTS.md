@@ -143,6 +143,25 @@ note-remote's `.github/workflows/notify-blog.yml` dispatches `note-updated` even
 Requires a PAT (`BLOG_REPO_TOKEN`) stored in note-remote's secrets.
 `.obsidian/**` and `.github/**` paths are excluded from triggering via `paths-ignore`.
 
+## Stats & visualization
+
+`src/lib/wordCount.ts` provides word counting for articles at build time:
+
+- `countWords(md: string): number` — strip Markdown syntax, count Chinese characters + English words
+- `countPostWords(post): number` — read `.md` file from disk via `post.filePath` or `src/content/blog/{id}.md`, call `countWords`, return 0 on error
+
+### Homepage stats sections
+
+Two new sections on the homepage (`src/pages/index.astro`):
+
+**Pie Chart** (`src/components/PieChart.astro`) — SVG donut chart showing top-level category proportions by total word count. Max 9 categories visible; smaller/overflow slices merged into "其他". Slices are clickable `._target` links to `/blog?category={label}`.
+
+**Hot Tags** (`src/components/HotTags.astro`) — Weighted tag cloud of parent directory names (`name:wordCount`). Font size scales from `0.85rem` to `1.4rem` based on word count ratio. Each tag links to its directory page.
+
+### Blog listing word count
+
+`src/pages/blog/index.astro` displays word count in post meta: `日期 · N字 · 分类`.
+
 ## LSP
 
 Configured in `~/.config/opencode/opencode.jsonc`:
