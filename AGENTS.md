@@ -7,6 +7,11 @@
 - No lint, test, or typecheck scripts exist
 - `git submodule update --init` — clone note-remote content (required on fresh clone)
 
+## Git workflow
+- **每次功能完成时** 使用 `git commit` 保存进度
+- **仅在收到明确推送指示时** 执行 `git push`
+- 提交前必须 `npm run build` 验证无错误
+
 ## Stack
 - **Astro v7** SSG, **Tailwind v4** via `@tailwindcss/vite` plugin
 - No `tailwind.config.js` — config lives in `src/styles/global.css` (`@theme` block)
