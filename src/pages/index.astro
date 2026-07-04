@@ -81,15 +81,14 @@ const pieData = Array.from(catWordCounts.entries())
       <div class="mt-4">
         <PieChart data={pieData} />
       </div>
-    </section>
-  )}
-
-  {hotTags.length > 0 && (
-    <section class="min-h-screen flex flex-col items-center justify-center px-4 lg:px-8">
-      <h2 class="text-xl font-semibold text-foreground">关键词</h2>
-      <div class="mt-4">
-        <HotTags items={hotTags} />
-      </div>
+      {hotTags.length > 0 && (
+        <>
+          <h2 class="text-xl font-semibold text-foreground mt-8">关键词</h2>
+          <div class="mt-4">
+            <HotTags items={hotTags} />
+          </div>
+        </>
+      )}
     </section>
   )}
   </div>
