@@ -144,4 +144,18 @@ if (!isArticle && !isIndex) {
       </div>
     )
   }
+  <script is:inline>
+    document.querySelectorAll('.prose h1,.prose h2,.prose h3,.prose h4,.prose h5,.prose h6').forEach(h=>{
+      const s=document.createElement('span');
+      s.classList.add('_target','cursor-pointer');
+      s.innerHTML=h.innerHTML;
+      h.innerHTML='';
+      h.appendChild(s);
+      s.addEventListener('click',e=>{
+        e.stopPropagation();
+        const r=h.getBoundingClientRect();
+        window.scrollTo({top:r.top+window.scrollY-window.innerHeight/5,behavior:'smooth'});
+      });
+    });
+  </script>
 </BaseLayout>
