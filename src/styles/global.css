@@ -53,3 +53,36 @@
   --color-accent-active-bg: var(--accent-active-bg);
   --color-accent-active-text: var(--accent-active-text);
 }
+
+.code-block-wrapper {
+  position: relative;
+}
+
+.code-block-wrapper .copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 0.375rem;
+  border-radius: 0.375rem;
+  background: rgba(55, 65, 81, 0.6);
+  color: #d1d5db;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.code-block-wrapper:hover .copy-btn {
+  opacity: 1;
+}
+
+.code-block-wrapper .copy-btn:hover {
+  background: rgba(75, 85, 99, 0.8);
+  color: #fff;
+}
