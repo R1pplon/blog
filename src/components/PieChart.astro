@@ -36,7 +36,7 @@ if (others.length > 0) {
   visible.push({ label: "其他", value: otherTotal, color: "#999999" });
 }
 
-const CX = 115;
+const CX = 95;
 const CY = 90;
 const OUTER_R = 80;
 const INNER_R = 40;
@@ -66,7 +66,7 @@ function arcPath(startAngle: number, endAngle: number) {
 ---
 
 <div class="pie-chart">
-  <svg viewBox="0 0 420 200" class="pie-svg">
+  <svg viewBox="0 0 320 200" class="pie-svg">
     {visible.map((d) => {
       const pct = d.value / total;
       const angle = pct * 2 * Math.PI;
@@ -75,31 +75,17 @@ function arcPath(startAngle: number, endAngle: number) {
       cumulative = endAngle;
 
       const midAngle = startAngle + angle / 2;
-      const ox = polarX(OUTER_R, midAngle);
-      const oy = polarY(OUTER_R, midAngle);
-      const isRight = ox >= CX;
-
-      const radialR = OUTER_R + 14;
-      const rx = polarX(radialR, midAngle);
-      const ry = polarY(radialR, midAngle);
-      const tx = rx + (isRight ? 8 : -8);
+      const labelR = 65;
+      const lx = CX + labelR * Math.cos(midAngle - Math.PI / 2);
+      const ly = CY + labelR * Math.sin(midAngle - Math.PI / 2);
 
       return (
         <>
-          <path
-            d={arcPath(startAngle, endAngle)}
-            fill={d.color}
-            class="pie-slice _target"
-            style="cursor: pointer"
-            onclick={`location.href='/blog?category=${d.label}'`}
-          >
+          <path d={arcPath(startAngle, endAngle)} fill={d.color} class="pie-slice _target" style={`cursor: pointer`} onclick={`location.href='/blog?category=${d.label}'`}>
             <title>{`${d.label}: ${d.value}字 (${Math.round(pct * 100)}%)`}</title>
           </path>
           {pct > 0.04 && (
-            <>
-              <polyline points={`${ox},${oy} ${rx},${ry} ${tx},${ry}`} class="pie-leader" />
-              <text x={isRight ? tx + 3 : tx - 3} y={ry} text-anchor={isRight ? "start" : "end"} dominant-baseline="central" class="pie-label">{d.label}</text>
-            </>
+            <text x={lx} y={ly} text-anchor="middle" dominant-baseline="central" class="pie-label">{d.label}</text>
           )}
         </>
       );
@@ -127,7 +113,7 @@ function arcPath(startAngle: number, endAngle: number) {
     flex-wrap: wrap;
   }
   .pie-svg {
-    width: 600px;
+    width: 280px;
     height: auto;
     flex-shrink: 0;
   }
@@ -137,22 +123,16 @@ function arcPath(startAngle: number, endAngle: number) {
   .pie-slice:hover {
     opacity: 0.85;
   }
-  .pie-leader {
-    stroke: var(--color-muted-foreground);
-    stroke-width: 0.6;
-    fill: none;
-    pointer-events: none;
-  }
   .pie-label {
     font-size: 6px;
-    fill: var(--color-foreground);
+    fill: var(--color-surface, #faf9f6);
     pointer-events: none;
   }
   .pie-legend {
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
-    font-size: 1.5rem;
+    font-size: 0.875rem;
   }
   .legend-item {
     display: flex;
