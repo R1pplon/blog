@@ -48,15 +48,6 @@ const pieData = Array.from(catWordCounts.entries())
     color: CAT_COLORS[i % CAT_COLORS.length],
   }))
   .sort((a, b) => b.value - a.value);
-
-const categoriesMap = new Map<string, number>();
-for (const post of posts) {
-  const cat = post.id.split("/")[0];
-  if (cat) {
-    categoriesMap.set(cat, (categoriesMap.get(cat) || 0) + 1);
-  }
-}
-const categories = Array.from(categoriesMap.entries());
 ---
 
 <BaseLayout title={siteConfig.title} description={siteConfig.description}>
@@ -100,15 +91,4 @@ const categories = Array.from(categoriesMap.entries());
       </div>
     </section>
   )}
-
-  <section class="mt-12">
-    <a href="/blog" class="_target inline-block"><h2 class="text-xl font-semibold text-foreground hover:text-accent-link-hover transition-colors">分类</h2></a>
-    <div class="mt-4 flex flex-wrap gap-3">
-      {categories.map(([cat, count]) => (
-        <a href={`/blog?category=${cat}`} class="_target rounded-full bg-secondary px-4 py-1.5 text-sm text-muted-foreground hover:bg-secondary-hover transition-colors">
-          {cat} ({count})
-        </a>
-      ))}
-    </div>
-  </section>
 </BaseLayout>
