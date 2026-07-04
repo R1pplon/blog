@@ -7,8 +7,8 @@ import { resolve } from "node:path";
 
 function getWordCount(post: any): number {
   try {
-    const filePath = post.filePath || `${post.id}.md`;
-    const raw = readFileSync(resolve("src/content/blog", filePath), "utf-8");
+    const filePath = post.filePath || `src/content/blog/${post.id}.md`;
+    const raw = readFileSync(resolve(filePath), "utf-8");
     return countWords(raw);
   } catch {
     return 0;
