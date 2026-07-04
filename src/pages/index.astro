@@ -52,7 +52,7 @@ const pieData = Array.from(catWordCounts.entries())
 
 <BaseLayout title={siteConfig.title} description={siteConfig.description}>
   <div class="-my-8">
-    <section class="min-h-screen flex flex-col items-center justify-center text-center px-4 lg:px-8">
+    <section class="min-h-screen flex flex-col items-center justify-center text-center">
     {siteConfig.avatar && (
       <a href="/about"><img src={siteConfig.avatar} alt="avatar" class="_target mx-auto size-[150px] rounded-full" /></a>
     )}
@@ -76,7 +76,7 @@ const pieData = Array.from(catWordCounts.entries())
   </section>
 
   {pieData.length > 0 && (
-    <section class="min-h-screen flex flex-col items-center justify-center px-4 lg:px-8">
+    <section class="min-h-screen flex flex-col items-center justify-center">
       <h2 class="text-xl font-semibold text-foreground">分布</h2>
       <div class="mt-4">
         <PieChart data={pieData} />
