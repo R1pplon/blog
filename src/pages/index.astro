@@ -51,7 +51,8 @@ const pieData = Array.from(catWordCounts.entries())
 ---
 
 <BaseLayout title={siteConfig.title} description={siteConfig.description}>
-  <section class="py-12 text-center">
+  <div class="-my-8">
+    <section class="min-h-screen flex flex-col items-center justify-center text-center px-4 lg:px-8">
     {siteConfig.avatar && (
       <a href="/about"><img src={siteConfig.avatar} alt="avatar" class="_target mx-auto size-[150px] rounded-full" /></a>
     )}
@@ -75,7 +76,7 @@ const pieData = Array.from(catWordCounts.entries())
   </section>
 
   {pieData.length > 0 && (
-    <section class="mt-12">
+    <section class="min-h-screen flex flex-col items-center justify-center px-4 lg:px-8">
       <h2 class="text-xl font-semibold text-foreground">分布</h2>
       <div class="mt-4">
         <PieChart data={pieData} />
@@ -84,11 +85,12 @@ const pieData = Array.from(catWordCounts.entries())
   )}
 
   {hotTags.length > 0 && (
-    <section class="mt-12">
+    <section class="min-h-screen flex flex-col items-center justify-center px-4 lg:px-8">
       <h2 class="text-xl font-semibold text-foreground">关键词</h2>
       <div class="mt-4">
         <HotTags items={hotTags} />
       </div>
     </section>
   )}
+  </div>
 </BaseLayout>
