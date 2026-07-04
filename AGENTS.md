@@ -49,7 +49,7 @@ src/content/blog/          → submodule → R1pplon/note-remote (root = DevOps/
 
 ### Updating notes
 
-1. Write `.md` in note-remote → commit + push to `main`
+1. Write `.md` in note-remote → commit + push to `master`
 2. note-remote CI dispatches `note-updated` event → blog auto-deploys
 3. Locally: `git submodule update --remote` in blog repo to sync
 
@@ -103,7 +103,7 @@ Indirect CSS variable pattern — no `dark:` prefix needed:
 
 ### note-remote → blog auto-deploy
 
-note-remote's `.github/workflows/notify-blog.yml` dispatches `note-updated` event to blog on push to main.
+note-remote's `.github/workflows/notify-blog.yml` dispatches `note-updated` event to blog on push to master.
 Requires a PAT (`BLOG_REPO_TOKEN`) stored in note-remote's secrets.
 `.obsidian/**` and `.github/**` paths are excluded from triggering via `paths-ignore`.
 
