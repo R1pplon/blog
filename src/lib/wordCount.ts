@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 export function countWords(md: string): number {
   if (!md) return 0
   let text = md
@@ -20,4 +23,14 @@ export function countWords(md: string): number {
   const englishWords = nonChinese ? nonChinese.split(/\s+/).filter((w) => /\w/.test(w)).length : 0
 
   return chineseChars + englishWords
+}
+
+export function countPostWords(post: { filePath?: string; id: string }): number {
+  try {
+    const filePath = post.filePath || `src/content/blog/${post.id}.md`;
+    const raw = readFileSync(resolve(filePath), "utf-8");
+    return countWords(raw);
+  } catch {
+    return 0;
+  }
 }

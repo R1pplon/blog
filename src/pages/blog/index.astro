@@ -1,19 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { countWords } from "../../lib/wordCount";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-
-function getWordCount(post: any): number {
-  try {
-    const filePath = post.filePath || `src/content/blog/${post.id}.md`;
-    const raw = readFileSync(resolve(filePath), "utf-8");
-    return countWords(raw);
-  } catch {
-    return 0;
-  }
-}
+import { countPostWords } from "../../lib/wordCount";
 
 const posts = await getCollection("blog");
 const sortedPosts = posts.sort(
@@ -98,7 +86,7 @@ function formatDate(date: Date) {
                     <span class="blog-meta">
                       {formatDate(post.data.date)}
                       <span class="mx-1.5 text-border">·</span>
-                      <span>{getWordCount(post)}字</span>
+                      <span>{countPostWords(post)}字</span>
                       <span class="mx-1.5 text-border">·</span>
                       <a href={`/blog/${parentPath}`} class="_target text-accent-link hover:text-accent-link-hover hover:underline">
                         {parentDir}

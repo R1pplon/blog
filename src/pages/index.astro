@@ -2,9 +2,53 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import FaultText from "../components/FaultText.astro";
+import HotTags from "../components/HotTags.astro";
+import PieChart from "../components/PieChart.astro";
+import { countPostWords } from "../lib/wordCount";
 import { siteConfig } from "../site.config";
 
+const CAT_COLORS = [
+  "#6B69D6", "#4ECDC4", "#FF6B6B", "#FFE66D",
+  "#95E1D3", "#F38181", "#AA96DA", "#C0392B",
+  "#45B7D1", "#96CEB4",
+];
+
 const posts = await getCollection("blog");
+
+const dirWordCounts = new Map<string, number>();
+for (const post of posts) {
+  const parts = post.id.split("/");
+  if (parts.length < 2) continue;
+  const parentPath = parts.slice(0, -1).join("/");
+  dirWordCounts.set(
+    parentPath,
+    (dirWordCounts.get(parentPath) || 0) + countPostWords(post)
+  );
+}
+const hotTags = Array.from(dirWordCounts.entries())
+  .map(([path, wc]) => ({
+    name: path.split("/").pop()!,
+    wordCount: wc,
+    href: `/blog/${path}`,
+  }))
+  .sort((a, b) => b.wordCount - a.wordCount);
+
+const catWordCounts = new Map<string, number>();
+for (const post of posts) {
+  const cat = post.id.split("/")[0];
+  catWordCounts.set(
+    cat,
+    (catWordCounts.get(cat) || 0) + countPostWords(post)
+  );
+}
+const pieData = Array.from(catWordCounts.entries())
+  .map(([label, value], i) => ({
+    label,
+    value,
+    color: CAT_COLORS[i % CAT_COLORS.length],
+  }))
+  .sort((a, b) => b.value - a.value);
+
 const categoriesMap = new Map<string, number>();
 for (const post of posts) {
   const cat = post.id.split("/")[0];
@@ -39,7 +83,25 @@ const categories = Array.from(categoriesMap.entries());
     )}
   </section>
 
-  <section class="mt-8">
+  {pieData.length > 0 && (
+    <section class="mt-12">
+      <h2 class="text-xl font-semibold text-foreground">分布</h2>
+      <div class="mt-4">
+        <PieChart data={pieData} />
+      </div>
+    </section>
+  )}
+
+  {hotTags.length > 0 && (
+    <section class="mt-12">
+      <h2 class="text-xl font-semibold text-foreground">目录</h2>
+      <div class="mt-4">
+        <HotTags items={hotTags} />
+      </div>
+    </section>
+  )}
+
+  <section class="mt-12">
     <a href="/blog" class="_target inline-block"><h2 class="text-xl font-semibold text-foreground hover:text-accent-link-hover transition-colors">分类</h2></a>
     <div class="mt-4 flex flex-wrap gap-3">
       {categories.map(([cat, count]) => (
