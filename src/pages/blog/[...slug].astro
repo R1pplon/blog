@@ -84,8 +84,8 @@ if (!isArticle && !isIndex) {
           <h1 class="text-3xl font-bold text-foreground"><span class="_target">{article!.data.title}</span></h1>
           <div class="mt-3 flex items-center gap-3 text-sm text-muted">
             <time datetime={article!.data.date.toISOString()}>{formattedDate}</time>
-            <a href={`/blog/${article!.id.split("/")[0]}`} class="_target text-accent-link hover:text-accent-link-hover hover:underline">
-              {article!.id.split("/")[0]}
+            <a href={`/blog/${article!.id.split("/").slice(0, -1).join("/")}`} class="_target text-accent-link hover:text-accent-link-hover hover:underline">
+              {article!.id.split("/").length > 1 ? article!.id.split("/")[article!.id.split("/").length - 2] : article!.id.split("/")[0]}
             </a>
           </div>
         </header>

@@ -68,7 +68,8 @@ function formatDate(date: Date) {
               {monthPosts.map((post) => {
                 const parts = post.id.split("/");
                 const category = parts[0];
-                const rest = parts.slice(1).join("/");
+                const parentDir = parts.length > 1 ? parts[parts.length - 2] : parts[0];
+                const parentPath = parts.slice(0, -1).join("/");
                 return (
                   <article
                     data-category={category}
@@ -84,8 +85,8 @@ function formatDate(date: Date) {
                     <span class="blog-meta">
                       {formatDate(post.data.date)}
                       <span class="mx-1.5 text-border">·</span>
-                      <a href={`/blog/${category}`} class="_target text-accent-link hover:text-accent-link-hover hover:underline">
-                        {category}
+                      <a href={`/blog/${parentPath}`} class="_target text-accent-link hover:text-accent-link-hover hover:underline">
+                        {parentDir}
                       </a>
                     </span>
                   </article>
