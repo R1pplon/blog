@@ -86,3 +86,8 @@
   background: rgba(75, 85, 99, 0.8);
   color: #fff;
 }
+
+::selection {
+  background-color: #6B69D6;
+  color: #ffffff;
+}
