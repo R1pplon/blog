@@ -1,1 +1,0 @@
-if(!preg_match('/[a-zA-Z]/is',$wllm))
