@@ -16,6 +16,7 @@
 - **Astro v7** SSG, **Tailwind v4** via `@tailwindcss/vite` plugin
 - No `tailwind.config.js` — config lives in `src/styles/global.css` (`@theme` block)
 - Tailwind typography plugin for article prose
+- **ECharts** (tree-shaken) for pie chart visualization
 
 ## Routing architecture
 
@@ -143,6 +144,15 @@ note-remote's `.github/workflows/notify-blog.yml` dispatches `note-updated` even
 Requires a PAT (`BLOG_REPO_TOKEN`) stored in note-remote's secrets.
 `.obsidian/**` and `.github/**` paths are excluded from triggering via `paths-ignore`.
 
+## Homepage layout
+
+Homepage (`src/pages/index.astro`) uses full-viewport scrolling sections:
+
+- **Section 1 (Hero)**: avatar, FaultText title, description, GitHub link — `min-h-screen` vertically centered
+- **Section 2 (Stats)**: "分布" donut chart + "关键词" tag cloud merged into one viewport
+
+Each section uses `min-h-screen flex flex-col items-center justify-center`. The `-my-8` wrapper negates BaseLayout `<main>` vertical padding. All redundant horizontal padding is stripped — BaseLayout `<main>` already provides `px-4 lg:px-8`. Pie/tags wrapper divs use `w-full max-w-2xl` to prevent `items-center` flex shrink from collapsing width.
+
 ## Stats & visualization
 
 `src/lib/wordCount.ts` provides word counting for articles at build time:
@@ -150,13 +160,20 @@ Requires a PAT (`BLOG_REPO_TOKEN`) stored in note-remote's secrets.
 - `countWords(md: string): number` — strip Markdown syntax, count Chinese characters + English words
 - `countPostWords(post): number` — read `.md` file from disk via `post.filePath` or `src/content/blog/{id}.md`, call `countWords`, return 0 on error
 
-### Homepage stats sections
+### Pie Chart (`src/components/PieChart.astro`)
 
-Two new sections on the homepage (`src/pages/index.astro`):
+ECharts donut chart (tree-shaken: PieChart + Tooltip + Legend + CanvasRenderer). Replaced SVG hand-rolled pie chart.
 
-**Pie Chart** (`src/components/PieChart.astro`) — SVG donut chart showing top-level category proportions by total word count. Max 9 categories visible; smaller/overflow slices merged into "其他". Slices are clickable `._target` links to `/blog?category={label}`.
+- **Data processing** (server-side in `.astro` frontmatter): same as before — top-level category word count aggregation, max 9 visible categories, <2% slices merged into "其他"
+- **Rendering**: ECharts Canvas via `src/lib/chart.ts` — `initPieChart(container)` reads `data-options` from container DOM
+- **Dark mode**: `MutationObserver` on `<html class="dark">` → `chart.setOption()` with theme-appropriate colors (foreground / muted / tooltip background)
+- **Interaction**: click slice → `/blog?category={name}` (except "其他"), hover tooltip shows `category: N字 (pct%)`
+- **Built-in features**: outside labels with leader lines, `avoidLabelOverlap`, vertical legend on right, `ResizeObserver` for responsive resize
+- `echarts` dependency added to `package.json`; `padAngle: 1` + `borderRadius: 2` for subtle inter-slice gaps
 
-**Hot Tags** (`src/components/HotTags.astro`) — Weighted tag cloud of parent directory names (`name:wordCount`). Font size scales from `0.85rem` to `1.4rem` based on word count ratio. Each tag links to its directory page.
+### Hot Tags (`src/components/HotTags.astro`)
+
+Weighted tag cloud of parent directory names (`name:wordCount`). Font size scales from `0.85rem` to `1.4rem` based on word count ratio. Each tag links to its directory page.
 
 ### Blog listing word count
 
